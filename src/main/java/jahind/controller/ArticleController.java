@@ -1,12 +1,19 @@
 package jahind.controller;
 
+import jahind.assembler.ArticleResourceAssembler;
 import jahind.entity.Article;
+import jahind.repository.ArticleRepository;
 import jahind.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,8 +34,14 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private ArticleRepository articleRepository;
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @Autowired
+    private ArticleResourceAssembler articleResourceAssembler;
+
+   /*@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<Resource<Article>> getArticles() {
         Collection<Article> articles = articleService.findAll();
         List<Resource<Article>> resources = new ArrayList<Resource<Article>>();
@@ -37,6 +50,14 @@ public class ArticleController {
             resources.add(getArticleResource(article));
         }
         return resources;
+    }*/
+
+
+   @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PagedResources<Article> getArticles(Pageable pageable, PagedResourcesAssembler assembler) {
+        Page<Article> articles = articleService.findAll(pageable);
+
+        return assembler.toResource(articles, articleResourceAssembler);
     }
 
     @RequestMapping(value = "/{article_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,7 +75,7 @@ public class ArticleController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Article> createArtilce(@RequestBody Article article) {
-        article.setArticle_created(new Date());
+        article.setCreated(new Date());
         Article savedArticle = articleService.create(article);
         article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id()))
                 .withSelfRel());

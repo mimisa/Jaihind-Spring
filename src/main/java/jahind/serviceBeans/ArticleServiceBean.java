@@ -4,6 +4,8 @@ import jahind.entity.Article;
 import jahind.repository.ArticleRepository;
 import jahind.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -29,6 +31,11 @@ public class ArticleServiceBean implements ArticleService {
 
     public Article create(Article article) {
         return articleRepository.save(article);
+    }
+
+    @Override
+    public Page<Article> findAll(Pageable pageable) {
+        return articleRepository.findAll(pageable);
     }
 
 
