@@ -2,18 +2,15 @@ package jahind.controller;
 
 import jahind.assembler.ArticleResourceAssembler;
 import jahind.entity.Article;
+import jahind.entity.User;
 import jahind.repository.ArticleRepository;
 import jahind.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -41,8 +38,8 @@ public class ArticleController {
     @Autowired
     private ArticleResourceAssembler articleResourceAssembler;
 
-   /*@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Resource<Article>> getArticles() {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<Resource<Article>> getArticles(@AuthenticationPrincipal User user) {
         Collection<Article> articles = articleService.findAll();
         List<Resource<Article>> resources = new ArrayList<Resource<Article>>();
 
@@ -50,15 +47,15 @@ public class ArticleController {
             resources.add(getArticleResource(article));
         }
         return resources;
-    }*/
+    }
 
 
-   @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  /*  @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedResources<Article> getArticles(Pageable pageable, PagedResourcesAssembler assembler) {
         Page<Article> articles = articleService.findAll(pageable);
 
         return assembler.toResource(articles, articleResourceAssembler);
-    }
+    }*/
 
     @RequestMapping(value = "/{article_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Resource<Article> getArticle(@PathVariable(value = "article_id") long article_id) {

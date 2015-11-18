@@ -38,7 +38,7 @@ public class Article extends ResourceSupport implements Serializable {
         this.article_content = article_content;
         this.article_published = article_published;
         this.article_name = article_name;
-       // this.article_created = new Date();
+        // this.article_created = new Date();
     }
 
     public Long getArticle_id() {
