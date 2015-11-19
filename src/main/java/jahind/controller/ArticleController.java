@@ -27,7 +27,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping(value = "/api/articles")
 public class ArticleController {
-
+/*
     @Autowired
     private ArticleService articleService;
 
@@ -37,7 +37,10 @@ public class ArticleController {
 
     @Autowired
     private ArticleResourceAssembler articleResourceAssembler;
+*/
 
+    // Fetch All Articles with pagination support
+    /*
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<Resource<Article>> getArticles(@AuthenticationPrincipal User user) {
         Collection<Article> articles = articleService.findAll();
@@ -49,7 +52,7 @@ public class ArticleController {
         return resources;
     }
 
-
+*/
   /*  @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedResources<Article> getArticles(Pageable pageable, PagedResourcesAssembler assembler) {
         Page<Article> articles = articleService.findAll(pageable);
@@ -57,6 +60,8 @@ public class ArticleController {
         return assembler.toResource(articles, articleResourceAssembler);
     }*/
 
+    /*
+    // Fetch Article based on article_id
     @RequestMapping(value = "/{article_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Resource<Article> getArticle(@PathVariable(value = "article_id") long article_id) {
 
@@ -67,11 +72,13 @@ public class ArticleController {
         return getArticleResource(article);
     }
 
-
+*/
     // Insert Article
+
+    /*
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> createArtilce(@RequestBody Article article) {
+    public ResponseEntity<Article> createArtilce(@RequestBody Article article, @AuthenticationPrincipal User user) {
         article.setCreated(new Date());
         Article savedArticle = articleService.create(article);
         article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id()))
@@ -79,14 +86,30 @@ public class ArticleController {
         return new ResponseEntity<Article>(savedArticle, HttpStatus.CREATED);
     }
 
+
+    // Delete Article based on article_id
+    @RequestMapping(value = "{article_id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Article> deleteArticle(@PathVariable("article_id") Long article_id,
+                                                 @AuthenticationPrincipal User user) {
+
+        if(articleRepository.findOne(article_id) == null){
+            return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
+        }
+        articleRepository.delete(article_id);
+        return new ResponseEntity<Article>(HttpStatus.OK);
+    }
+
+
     private Resource<Article> getArticleResource(Article article) {
 
         Resource<Article> resource = new Resource<Article>(article);
         // Link to Article
         resource.add(linkTo(methodOn(ArticleController.class).getArticle(article.getArticle_id())).withSelfRel());
+
+        //resource.add(linkTo(methodOn(UserController.class).getUser(article.getUser().getId())).withRel("user_id"));
         return resource;
 
     }
-
+*/
 
 }
