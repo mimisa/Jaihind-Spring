@@ -1,5 +1,6 @@
 package jahind.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ARTICLE")
 public class Article extends ResourceSupport implements Serializable {
+
     @Id
     @GeneratedValue
     @Column(name = "ARTICLE_ID")
@@ -30,6 +32,10 @@ public class Article extends ResourceSupport implements Serializable {
 
     @Column(name = "ARTICLE_PUBLISHED", nullable = false)
     private Integer article_published;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Article() {
     }
@@ -79,5 +85,13 @@ public class Article extends ResourceSupport implements Serializable {
 
     public void setArticle_published(Integer article_published) {
         this.article_published = article_published;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

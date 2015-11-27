@@ -35,8 +35,7 @@ public class OAuth2ServerConfiguration {
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) {
             // @formatter:off
-            resources
-                    .resourceId(RESOURCE_ID);
+            resources.resourceId(RESOURCE_ID);
             // @formatter:on
         }
 
@@ -45,12 +44,11 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             http
                     .authorizeRequests()
-                    .antMatchers("/api/users").hasRole("ADMIN")
+                            //  .antMatchers("/api/users").hasRole("ADMIN")
                     .antMatchers("/api/greeting").authenticated();
-            http
-                    .authorizeRequests()
-                    .antMatchers("/api/users").hasRole("ADMIN")
-                    .antMatchers("/api/articles").authenticated();
+            //.antMatchers("/api/articles/{article_id}").hasRole("ADMIN")
+            //.antMatchers("/api/articles").authenticated();
+
             // @formatter:on
         }
 
@@ -58,8 +56,7 @@ public class OAuth2ServerConfiguration {
 
     @Configuration
     @EnableAuthorizationServer
-    protected static class AuthorizationServerConfiguration extends
-            AuthorizationServerConfigurerAdapter {
+    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
         private TokenStore tokenStore = new InMemoryTokenStore();
 
@@ -71,8 +68,7 @@ public class OAuth2ServerConfiguration {
         private UserDetailServiceBean userDetailsService;
 
         @Override
-        public void configure(AuthorizationServerEndpointsConfigurer endpoints)
-                throws Exception {
+        public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
             // @formatter:off
             endpoints
                     .tokenStore(this.tokenStore)

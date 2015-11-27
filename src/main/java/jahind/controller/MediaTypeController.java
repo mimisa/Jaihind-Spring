@@ -25,7 +25,7 @@ public class MediaTypeController {
 
     // Fetch Media_Type with id
     @RequestMapping(value = "/{media_type_id}", method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Media_Type> getMediaType(@PathVariable("media_type_id") Long media_type_id) {
         Media_Type mediaType = mediaTypeService.findOne(media_type_id);
         mediaType.add(linkTo(methodOn(MediaTypeController.class).getMediaType(media_type_id)).withSelfRel());
@@ -34,7 +34,7 @@ public class MediaTypeController {
 
     // Insert Media_Type
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Media_Type> createMediaType(@RequestBody Media_Type mediaType) {
         Media_Type savedMediaType = mediaTypeService.create(mediaType);
         mediaType.add(linkTo(methodOn(MediaTypeController.class).getMediaType(savedMediaType.getMedia_type_id()))

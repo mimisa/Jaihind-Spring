@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,14 +26,19 @@ public class User {
     @Column(unique = true, nullable = false)
     private String login;
 
+    @JsonIgnore
     @NotEmpty
     private String password;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "user_id")},
-               inverseJoinColumns = {@JoinColumn(name = "role_id")})
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles = new HashSet<Role>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Article> articles;
 
     public User() {
     }
@@ -43,7 +49,7 @@ public class User {
         this.name = user.getName();
         this.login = user.getLogin();
         this.password = user.getPassword();
-        // this.roles = user.getRoles();
+        this.roles = user.getRoles();
     }
 
     public Integer getId() {
@@ -84,5 +90,13 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
     }
 }

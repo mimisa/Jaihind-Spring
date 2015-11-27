@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 
 /**
@@ -29,8 +30,36 @@ public class ArticleServiceBean implements ArticleService {
         return articleRepository.findOne(id);
     }
 
+    @Override
     public Article create(Article article) {
         return articleRepository.save(article);
+    }
+
+    /*
+    public Article create(Article article, User user) {
+        // Adding date & user to article
+        article.setCreated(new Date());
+        article.setUser(user);
+        Set<Article> articles = null;
+        // Adding articles to user
+        if (user.getArticles().size() == 0) {
+           articles = new HashSet<>();
+       } else {
+           articles = user.getArticles();
+       }
+        articles.add(article);
+        user.setArticles(articles);
+
+        // save user
+        userRepository.save(user);
+
+        // save article
+        return articleRepository.save(article);
+    }
+*/
+    @Override
+    public void delete(Article article) {
+        articleRepository.delete(article);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package jahind.service;
 
 import jahind.entity.Article;
+import jahind.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,5 +19,9 @@ public interface ArticleService {
     Article findOne(Long id);
 
     Article create(Article article);
+
+   // Article create(Article article, User user);
+
+    void delete(Article article);
 
 }
