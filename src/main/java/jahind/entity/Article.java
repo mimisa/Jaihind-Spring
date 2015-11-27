@@ -1,6 +1,5 @@
 package jahind.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;

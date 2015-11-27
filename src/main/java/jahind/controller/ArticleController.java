@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -44,7 +46,7 @@ public class ArticleController {
         article.setUser(user1);
         List<Article> articles = null;
         if (user1.getArticles().isEmpty() || user1.getArticles().size() == 0) {
-           articles = new ArrayList<>();
+            articles = new ArrayList<>();
             articles.add(article);
             user1.setArticles(articles);
 

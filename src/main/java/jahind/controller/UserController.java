@@ -52,7 +52,7 @@ public class UserController {
         Resource<User> resource = new Resource<User>(user);
         resource.add(linkTo(methodOn(UserController.class).getUser(user_id)).withSelfRel());
 
-        /*
+
         Set<Role> roles = user.getRoles();
         for (Role role : roles) {
             resource.add(linkTo(methodOn(RoleController.class).getRole(role.getId())).withRel("Role: " + role.getName()));
@@ -62,7 +62,6 @@ public class UserController {
         for (Article a : articles) {
             resource.add(linkTo(methodOn(ArticleController.class).getArticle(a.getArticle_id())).withRel("Article"));
         }
-        */
         return resource;
     }
 
@@ -94,7 +93,7 @@ public class UserController {
         }
 
         List<Article> articles = user.getArticles();
-        for (Article a : articles){
+        for (Article a : articles) {
             resource.add(linkTo(methodOn(UserController.class).getArticle(user.getId(), a.getArticle_id())).withRel("Article"));
         }
         return resource;
@@ -116,7 +115,7 @@ public class UserController {
         List<Article> articles = user.getArticles();
         if (!articles.isEmpty()) {
             for (Article a : articles) {
-                entity =  new ResponseEntity<Article>(a, HttpStatus.OK);
+                entity = new ResponseEntity<Article>(a, HttpStatus.OK);
             }
         }
         return entity;
