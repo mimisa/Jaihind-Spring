@@ -23,4 +23,6 @@ public interface ArticleService {
 
     void delete(Article article);
 
+    void delete(Long article_id);
+
 }

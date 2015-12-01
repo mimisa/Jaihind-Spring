@@ -32,6 +32,10 @@ public class Article extends ResourceSupport implements Serializable {
     @Column(name = "ARTICLE_PUBLISHED", nullable = false)
     private Integer article_published;
 
+    @Column(name = "PUBLISHED_DATE", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date published_date;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -39,9 +43,10 @@ public class Article extends ResourceSupport implements Serializable {
     public Article() {
     }
 
-    public Article(String article_content, Integer article_published, String article_name) {
+    public Article(String article_content, String article_name) {
         this.article_content = article_content;
-        this.article_published = article_published;
+        // this.article_published = article_published;
+        // this.article_published = article_published;
         this.article_name = article_name;
         // this.article_created = new Date();
     }
@@ -92,5 +97,13 @@ public class Article extends ResourceSupport implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getPublished_date() {
+        return published_date;
+    }
+
+    public void setPublished_date(Date published_date) {
+        this.published_date = published_date;
     }
 }

@@ -62,6 +62,11 @@ public class ArticleServiceBean implements ArticleService {
     }
 
     @Override
+    public void delete(Long article_id) {
+        articleRepository.delete(article_id);
+    }
+
+    @Override
     public Page<Article> findAll(Pageable pageable) {
         return articleRepository.findAll(pageable);
     }
