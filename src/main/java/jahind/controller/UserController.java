@@ -46,7 +46,8 @@ public class UserController {
     }
 
     // FETCH USER BASED ON USER_ID
-    @RequestMapping(value = "/api/users/{user_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/users/{user_id}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Resource<User> getUser(@PathVariable("user_id") Integer user_id) {
         User user = userRepository.findOne(user_id);
         Resource<User> resource = new Resource<User>(user);
@@ -55,7 +56,8 @@ public class UserController {
 
         Set<Role> roles = user.getRoles();
         for (Role role : roles) {
-            resource.add(linkTo(methodOn(RoleController.class).getRole(role.getId())).withRel("Role: " + role.getName()));
+            resource.add(linkTo(methodOn(RoleController.class).getRole(role.getId()))
+                    .withRel("Role: " + role.getName()));
         }
 
         List<Article> articles = user.getArticles();
@@ -94,7 +96,8 @@ public class UserController {
 
         List<Article> articles = user.getArticles();
         for (Article a : articles) {
-            resource.add(linkTo(methodOn(UserController.class).getArticle(user.getId(), a.getArticle_id())).withRel("Article"));
+            resource.add(linkTo(methodOn(UserController.class).getArticle(user.getId(), a.getArticle_id()))
+                    .withRel("Article"));
         }
         return resource;
 
@@ -105,8 +108,10 @@ public class UserController {
     }
 
     // FETCH AN ARTICLES OF A PARTICULAR USER
-    @RequestMapping(value = "/api/users/{user_id}/articles/{article_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> getArticle(@PathVariable("user_id") Integer user_id, @PathVariable("article_id") Long article_id) {
+    @RequestMapping(value = "/api/users/{user_id}/articles/{article_id}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Article> getArticle(@PathVariable("user_id") Integer user_id,
+                                              @PathVariable("article_id") Long article_id) {
 
         ResponseEntity<Article> entity = null;
         Resource<Article> resource = null;

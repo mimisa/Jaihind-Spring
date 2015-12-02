@@ -15,6 +15,7 @@ import java.util.Set;
 @Entity
 public class User {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private Integer id;

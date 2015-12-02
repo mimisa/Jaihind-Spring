@@ -44,11 +44,11 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             http
                     .authorizeRequests()
-                            //  .antMatchers("/api/users").hasRole("ADMIN")
+                    //.antMatchers("/api/users").hasRole("ADMIN")
+                    //.antMatchers("/api/articles/{article_id}/{publish}").hasRole("ADMIN")
                     .antMatchers("/api/greeting").authenticated();
-            //.antMatchers("/api/articles/{article_id}").hasRole("ADMIN")
-            //.antMatchers("/api/articles").authenticated();
-
+                    //.antMatchers("/api/articles/{article_id}").hasRole("ADMIN")
+                    // .antMatchers("/api/articles").authenticated();
             // @formatter:on
         }
 
