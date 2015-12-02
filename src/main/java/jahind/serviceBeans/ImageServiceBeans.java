@@ -21,4 +21,9 @@ public class ImageServiceBeans implements ImageService {
 
         // return imageRepository.save(image);
     }
+
+    @Override
+    public Image findOne(Long image_id) {
+        return imageRepository.findOne(image_id);
+    }
 }

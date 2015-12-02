@@ -7,4 +7,6 @@ import jahind.entity.Image;
  */
 public interface ImageService {
     Image save(Image image);
+
+    Image findOne(Long image_id);
 }

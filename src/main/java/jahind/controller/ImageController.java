@@ -4,15 +4,19 @@ import jahind.entity.Image;
 import jahind.entity.Media_Type;
 import jahind.service.ImageService;
 import jahind.service.MediaTypeService;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Blob;
 
 /**
@@ -20,9 +24,10 @@ import java.sql.Blob;
  */
 @RestController
 @RequestMapping(value = "/api/images")
-//Max uploaded file size (here it is 20 MB)
-//@MultipartConfig(fileSizeThreshold = 20971520)
 public class ImageController {
+
+    @Autowired
+    ServletContext context;
 
     @Autowired
     private MediaTypeService mediaTypeService;
@@ -30,16 +35,27 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    // Insert Image
+    // Return custom JsonObject
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getJson() throws JSONException {
+        JSONObject outputJsonObj = new JSONObject();
+        outputJsonObj.put("Key", "Value");
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<Image> imageUpload(@RequestParam("file") MultipartFile file) throws Exception {
+        return outputJsonObj.toString();
+    }
+
+    // Insert Image
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String imageUpload(@RequestParam("file") MultipartFile file,
+                              HttpServletRequest req, HttpServletResponse response) throws Exception {
 
         if (mediaTypeService.findOne(1L) == null) {
             System.out.println("MediaType not found");
-            return new ResponseEntity<Image>(HttpStatus.NO_CONTENT);
         }
 
+        // Save in DB
         Image image = new Image();
         byte[] bytes = file.getBytes();
         Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
@@ -48,19 +64,47 @@ public class ImageController {
         image.setImage_type(file.getContentType());
         image.setImage_blob(blob);
 
-
         Media_Type mt = mediaTypeService.findOne(1L);
         image.setMedia_type(mt);
 
         imageService.save(image);
 
-        //image.add(linkTo(methodOn(ImageController.class).getMediaType(savedMediaType.getMedia_type_id())).withSelfRel());
+        JSONObject outputJsonObj = new JSONObject();
 
-        return new ResponseEntity<Image>(image, HttpStatus.CREATED);
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+
+        outputJsonObj.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image.getImage_id());
+
+        return outputJsonObj.toString();
+
+
+        // image.add(linkTo(methodOn(ImageController.class).getPhotoURL(image.getImage_id())).withSelfRel());
+        //return new ResponseEntity<Image>(image, HttpStatus.CREATED);
 
     }
 
-    //@RequestMapping(value = "/{image_id}", produces = MediaType.)
+    @RequestMapping(value = "/{image_id}/details", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Image> getPhotoURL(@PathVariable("image_id") Long image_id) {
+        Image image = imageService.findOne(image_id);
+        return new ResponseEntity<Image>(image, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{image_id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getPhoto(@PathVariable("image_id") Long image_id) throws Exception {
+        Image image = imageService.findOne(image_id);
+        Blob blob = image.getImage_blob();
+        int length = (int) blob.length();
+        byte[] bytes = blob.getBytes(1, length);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        return bytes;
+
+    }
+
+
 /*
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String uploadFile(@RequestParam("uploadedFile") MultipartFile uploadedFileRef) {
