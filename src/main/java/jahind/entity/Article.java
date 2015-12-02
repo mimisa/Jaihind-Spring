@@ -36,6 +36,9 @@ public class Article extends ResourceSupport implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date published_date;
 
+    @Column(name = "CATEGORY", nullable = false)
+    private String category;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -105,5 +108,13 @@ public class Article extends ResourceSupport implements Serializable {
 
     public void setPublished_date(Date published_date) {
         this.published_date = published_date;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

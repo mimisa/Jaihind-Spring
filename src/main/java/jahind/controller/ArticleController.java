@@ -14,8 +14,11 @@ import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +26,8 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+//import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 /**
  * Created by Gaurav on 17/11/15.
@@ -50,13 +55,20 @@ public class ArticleController {
 
     // Insert Article - payload: name,content
     //@Cross
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> createArticle(@RequestBody Article article, @AuthenticationPrincipal User user) {
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Article> createArticle(String article_name, String article_content,
+                                                 String category, @AuthenticationPrincipal User user) {
         User user1 = userService.findOne(1);
 
+        Article article = new Article();
+        article.setArticle_name(article_name);
+        article.setArticle_content(article_content);
         article.setCreated(new Date());
         article.setArticle_published(0);
         article.setPublished_date(null);
+        article.setCategory(category);
+
         article.setUser(user1);
         List<Article> articles = null;
         if (user1.getArticles().isEmpty() || user1.getArticles().size() == 0) {
@@ -75,8 +87,8 @@ public class ArticleController {
 
         userService.save(user1);
 
-        //Article savedArticle =  articleService.create(article, user1);
-        // article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id())).withSelfRel());
+        article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id())).withSelfRel());
+
         return new ResponseEntity<Article>(savedArticle, HttpStatus.CREATED);
     }
 
@@ -108,8 +120,10 @@ public class ArticleController {
     }
 
     //Publish Article based on article_id
-    @RequestMapping(value = "{article_id}/publish", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> publishArticle(@PathVariable("article_id") Long article_id, @AuthenticationPrincipal User user) {
+    @RequestMapping(value = "{article_id}/publish", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Article> publishArticle(@PathVariable("article_id") Long article_id,
+                                                  @AuthenticationPrincipal User user) {
         if (articleService.findOne(article_id) == null) {
             return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
         }
