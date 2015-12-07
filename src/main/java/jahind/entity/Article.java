@@ -32,7 +32,7 @@ public class Article extends ResourceSupport implements Serializable {
     private Date created;
 
     @Column(name = "ARTICLE_PUBLISHED", nullable = false)
-    private Integer article_published;
+    private Integer published;
 
     @Column(name = "PUBLISHED_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
@@ -93,11 +93,11 @@ public class Article extends ResourceSupport implements Serializable {
     }
 
     public Integer getArticle_published() {
-        return article_published;
+        return published;
     }
 
     public void setArticle_published(Integer article_published) {
-        this.article_published = article_published;
+        this.published = article_published;
     }
 
     public User getUser() {

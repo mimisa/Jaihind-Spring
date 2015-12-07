@@ -20,6 +20,16 @@ public class ArticleServiceBean implements ArticleService {
     private ArticleRepository articleRepository;
 
     @Override
+    public Page<Article> findAll(Pageable pageable) {
+        return articleRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Article> findByCatgory(Pageable pageable, String category) {
+        return articleRepository.findByCategory(pageable, category);
+    }
+
+    @Override
     public Collection<Article> findAll() {
         return articleRepository.findAll();
     }
@@ -64,11 +74,6 @@ public class ArticleServiceBean implements ArticleService {
     @Override
     public void delete(Long article_id) {
         articleRepository.delete(article_id);
-    }
-
-    @Override
-    public Page<Article> findAll(Pageable pageable) {
-        return articleRepository.findAll(pageable);
     }
 
 

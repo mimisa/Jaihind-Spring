@@ -10,13 +10,12 @@ import jahind.service.ArticleImageService;
 import jahind.service.ArticleService;
 import jahind.service.ImageService;
 import jahind.service.UserService;
-import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,12 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 //import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
@@ -58,12 +55,83 @@ public class ArticleController {
     @Autowired
     private ArticleResourceAssembler articleResourceAssembler;
 
+    // Display article based on category- url param
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, params = "category")
+    public String getData(@RequestParam("category") String category,
+                          Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req) throws Exception {
+        Page<Article> articles = articleService.findByCatgory(pageable, category);
+        JSONArray jsonArray = new JSONArray();
+        for (Article article : articles) {
+            List<Article_Image> aiList = article.getArticleImageList();
+            long image_id = 0L;
+            for (Article_Image ai : aiList) {
+                Image image = ai.getImage_id();
+                image_id = image.getImage_id();
+            }
+            String IP = req.getServerName();
+            int Port = req.getServerPort();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("article_id", article.getArticle_id());
+            jsonObject.put("article_name", article.getArticle_name());
+            jsonObject.put("article_content", article.getArticle_content());
+            jsonObject.put("article_created", article.getCreated());
+            jsonObject.put("category", article.getCategory());
+            jsonObject.put("article_published", article.getArticle_published());
+            jsonObject.put("published_date", article.getPublished_date());
+            jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
+            jsonObject.put("user_name", article.getUser().getName());
+            if (image_id != 0L) {
+                jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+            } else {
+                jsonObject.put("image_link", "NA");
+            }
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray.toString();
+
+
+    }
+
     // Fetch All Articles
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PagedResources<Article> getArticles(Pageable pageable, PagedResourcesAssembler assembler) {
+    public String getArticles(Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
+            throws Exception {
         Page<Article> articles = articleService.findAll(pageable);
+        JSONArray jsonArray = new JSONArray();
 
-        return assembler.toResource(articles, articleResourceAssembler);
+        for (Article article : articles) {
+            List<Article_Image> aiList = article.getArticleImageList();
+            long image_id = 0L;
+            for (Article_Image ai : aiList) {
+                Image image = ai.getImage_id();
+                image_id = image.getImage_id();
+            }
+            String IP = req.getServerName();
+            int Port = req.getServerPort();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("article_id", article.getArticle_id());
+            jsonObject.put("article_name", article.getArticle_name());
+            jsonObject.put("article_content", article.getArticle_content());
+            jsonObject.put("article_created", article.getCreated());
+            jsonObject.put("category", article.getCategory());
+            jsonObject.put("article_published", article.getArticle_published());
+            jsonObject.put("published_date", article.getPublished_date());
+            jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
+            jsonObject.put("user_name", article.getUser().getName());
+            if (image_id != 0L) {
+                jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+            } else {
+                jsonObject.put("image_link", "NA");
+            }
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray.toString();
+
+        //return assembler.toResource(articles, articleResourceAssembler);
     }
 
     // Insert Article - payload: name,content
@@ -71,8 +139,8 @@ public class ArticleController {
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> createArticle(String article_name, String article_content, Long image_id,
-                                                 String category, @AuthenticationPrincipal User user){
+    public String createArticle(String article_name, String article_content, Long image_id, String category,
+                                HttpServletRequest req, @AuthenticationPrincipal User user) throws Exception {
         User user1 = userService.findOne(1);
 
         // Creating Article
@@ -126,27 +194,60 @@ public class ArticleController {
 
         articleImageService.save(ai);
 
-        article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id())).withSelfRel());
 
-        return new ResponseEntity<Article>(savedArticle, HttpStatus.CREATED);
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("article_name", article.getArticle_name());
+        jsonObject.put("article_content", article.getArticle_content());
+        jsonObject.put("article_created", article.getCreated());
+        jsonObject.put("category", article.getCategory());
+        jsonObject.put("article_published", article.getArticle_published());
+        jsonObject.put("published_date", article.getPublished_date());
+        jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
+        jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        jsonObject.put("user_name", article.getUser().getName());
+
+        return jsonObject.toString();
+        //article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id())).withSelfRel());
+
+        //return new ResponseEntity<Article>(savedArticle, HttpStatus.CREATED);
     }
 
     // Fetch Article based on article_id
     @RequestMapping(value = "/{article_id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Resource<Article> getArticle(@PathVariable(value = "article_id") long article_id){
+    public String getArticle(@PathVariable(value = "article_id") long article_id, HttpServletRequest req) throws Exception {
 
         Article article = articleService.findOne(article_id);
         if (article == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Resource<Article> resource = new Resource<Article>(article);
+        List<Article_Image> aiList = article.getArticleImageList();
+        long image_id = 0L;
+        for (Article_Image ai : aiList) {
+            Image image = ai.getImage_id();
+            image_id = image.getImage_id();
+        }
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("article_name", article.getArticle_name());
+        jsonObject.put("article_content", article.getArticle_content());
+        jsonObject.put("article_created", article.getCreated());
+        jsonObject.put("category", article.getCategory());
+        jsonObject.put("article_published", article.getArticle_published());
+        jsonObject.put("published_date", article.getPublished_date());
+        jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
+        jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        jsonObject.put("user_name", article.getUser().getName());
 
         // Link to Article
-        resource.add(linkTo(methodOn(ArticleController.class).getArticle(article.getArticle_id())).withSelfRel());
+        // resource.add(linkTo(methodOn(ArticleController.class).getArticle(article.getArticle_id())).withSelfRel());
 
-        return resource;
+        return jsonObject.toString();
     }
 
     // Delete Article based on article_id
@@ -181,14 +282,4 @@ public class ArticleController {
     }
 
 
-    // Display article based on category- url param
-    @RequestMapping(value = "{category}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getArticleByCategory(@RequestParam("category") String category) throws JSONException {
-        JSONObject outputJsonObj = new JSONObject();
-        outputJsonObj.put("Key", category);
-
-        return outputJsonObj.toString();
-    }
 }

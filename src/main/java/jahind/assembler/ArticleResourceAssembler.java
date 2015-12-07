@@ -17,7 +17,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Component
 public class ArticleResourceAssembler extends ResourceAssemblerSupport<Article, Resource> {
 
-
     public ArticleResourceAssembler() {
         super(ArticleController.class, Resource.class);
     }

@@ -13,6 +13,8 @@ public interface ArticleService {
 
     Page<Article> findAll(Pageable pageable);
 
+    Page<Article> findByCatgory(Pageable pageable, String category);
+
     Collection<Article> findAll();
 
     Article findOne(Long id);

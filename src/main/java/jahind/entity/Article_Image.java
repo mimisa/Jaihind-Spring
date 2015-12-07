@@ -24,7 +24,7 @@ public class Article_Image {
     private Image image_id;
 
 
-    public Article_Image(){
+    public Article_Image() {
 
     }
 

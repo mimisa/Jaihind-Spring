@@ -61,9 +61,9 @@ public class UserController {
         }
 
         List<Article> articles = user.getArticles();
-        for (Article a : articles) {
+        /*for (Article a : articles) {
             resource.add(linkTo(methodOn(ArticleController.class).getArticle(a.getArticle_id())).withRel("Article"));
-        }
+        }*/
         return resource;
     }
 
