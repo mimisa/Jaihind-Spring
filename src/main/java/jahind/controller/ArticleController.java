@@ -194,7 +194,6 @@ public class ArticleController {
 
         articleImageService.save(ai);
 
-
         String IP = req.getServerName();
         int Port = req.getServerPort();
         JSONObject jsonObject = new JSONObject();
@@ -218,7 +217,8 @@ public class ArticleController {
     @RequestMapping(value = "/{article_id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getArticle(@PathVariable(value = "article_id") long article_id, HttpServletRequest req) throws Exception {
+    public String getArticle(@PathVariable(value = "article_id") long article_id, HttpServletRequest req)
+            throws Exception {
 
         Article article = articleService.findOne(article_id);
         if (article == null) {
@@ -258,6 +258,11 @@ public class ArticleController {
             return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
         }
 
+        Article article = articleService.findOne(article_id);
+        List<Article_Image> aiList = article.getArticleImageList();
+        for(Article_Image ai: aiList){
+            articleImageService.delete(ai);
+        }
         articleService.delete(article_id);
         return new ResponseEntity<Article>(HttpStatus.OK);
     }

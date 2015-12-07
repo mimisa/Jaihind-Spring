@@ -21,5 +21,10 @@ public class ArticleImageServiceBean implements ArticleImageService {
         return articleImageRepository.save(ai);
     }
 
+    @Override
+    public void delete(Article_Image ai) {
+        articleImageRepository.delete(ai);
+    }
+
 
 }

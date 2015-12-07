@@ -8,4 +8,6 @@ import jahind.entity.Article_Image;
 public interface ArticleImageService {
     Article_Image save(Article_Image ai);
 
+    void delete(Article_Image ai);
+
 }
