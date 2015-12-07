@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * Created by Gaurav on 30/11/15.
  */
 @Service
-public class ImageServiceBeans implements ImageService {
+public class ImageServiceBean implements ImageService {
 
     @Autowired
     private ImageRepository imageRepository;

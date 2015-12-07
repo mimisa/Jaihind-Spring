@@ -2,9 +2,16 @@ package jahind.controller;
 
 import jahind.assembler.ArticleResourceAssembler;
 import jahind.entity.Article;
+import jahind.entity.Article_Image;
+import jahind.entity.Image;
 import jahind.entity.User;
+import jahind.repository.ArticleImageRepository;
+import jahind.service.ArticleImageService;
 import jahind.service.ArticleService;
+import jahind.service.ImageService;
 import jahind.service.UserService;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +44,15 @@ public class ArticleController {
     private ArticleService articleService;
 
     @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private ArticleImageService articleImageService;
+
+    @Autowired
+    private ArticleImageRepository articleImageRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -55,12 +68,14 @@ public class ArticleController {
 
     // Insert Article - payload: name,content
     //@Cross
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> createArticle(String article_name, String article_content,
-                                                 String category, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Article> createArticle(String article_name, String article_content, Long image_id,
+                                                 String category, @AuthenticationPrincipal User user){
         User user1 = userService.findOne(1);
 
+        // Creating Article
         Article article = new Article();
         article.setArticle_name(article_name);
         article.setArticle_content(article_content);
@@ -83,9 +98,33 @@ public class ArticleController {
 
         }
 
+        // Fetch Image
+        List<Article_Image> articleImageList = null;
+        Article_Image ai = new Article_Image();
+        if (imageService.findOne(image_id) == null) {
+            article.setArticleImageList(null);
+        } else {
+            Image image = imageService.findOne(image_id);
+            if (article.getArticleImageList() == null) {
+                articleImageList = new ArrayList<>();
+            } else {
+                articleImageList = article.getArticleImageList();
+            }
+            ai.setArticle_id(article);
+            ai.setImage_id(image);
+
+
+            articleImageList.add(ai);
+
+        }
+
+        // Save Article
+        article.setArticleImageList(articleImageList);
         Article savedArticle = articleService.create(article);
 
         userService.save(user1);
+
+        articleImageService.save(ai);
 
         article.add(linkTo(methodOn(ArticleController.class).getArticle(savedArticle.getArticle_id())).withSelfRel());
 
@@ -93,14 +132,17 @@ public class ArticleController {
     }
 
     // Fetch Article based on article_id
-    @RequestMapping(value = "/{article_id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Resource<Article> getArticle(@PathVariable(value = "article_id") long article_id) {
+    @RequestMapping(value = "/{article_id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Resource<Article> getArticle(@PathVariable(value = "article_id") long article_id){
 
         Article article = articleService.findOne(article_id);
         if (article == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         Resource<Article> resource = new Resource<Article>(article);
+
         // Link to Article
         resource.add(linkTo(methodOn(ArticleController.class).getArticle(article.getArticle_id())).withSelfRel());
 
@@ -120,7 +162,8 @@ public class ArticleController {
     }
 
     //Publish Article based on article_id
-    @RequestMapping(value = "{article_id}/publish", method = RequestMethod.PUT,
+    @RequestMapping(value = "{article_id}/publish",
+            method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Article> publishArticle(@PathVariable("article_id") Long article_id,
                                                   @AuthenticationPrincipal User user) {
@@ -137,5 +180,15 @@ public class ArticleController {
         return new ResponseEntity<Article>(updatedArticle, HttpStatus.OK);
     }
 
-    // Display Articles_Names of all Articles
+
+    // Display article based on category- url param
+    @RequestMapping(value = "{category}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getArticleByCategory(@RequestParam("category") String category) throws JSONException {
+        JSONObject outputJsonObj = new JSONObject();
+        outputJsonObj.put("Key", category);
+
+        return outputJsonObj.toString();
+    }
 }

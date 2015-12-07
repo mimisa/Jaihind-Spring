@@ -1,10 +1,12 @@
 package jahind.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Gaurav on 16/11/15.
@@ -38,6 +40,10 @@ public class Article extends ResourceSupport implements Serializable {
 
     @Column(name = "CATEGORY", nullable = false)
     private String category;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "article_id")
+    private List<Article_Image> articleImageList;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -116,5 +122,13 @@ public class Article extends ResourceSupport implements Serializable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<Article_Image> getArticleImageList() {
+        return articleImageList;
+    }
+
+    public void setArticleImageList(List<Article_Image> articleImageList) {
+        this.articleImageList = articleImageList;
     }
 }

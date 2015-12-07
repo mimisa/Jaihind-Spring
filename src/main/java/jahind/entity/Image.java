@@ -6,6 +6,7 @@ import org.springframework.hateoas.ResourceSupport;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.util.List;
 
 /**
  * Created by Gaurav on 30/11/15.
@@ -32,6 +33,9 @@ public class Image extends ResourceSupport implements Serializable {
     @ManyToOne
     @JoinColumn(name = "MEDIA_TYPE_ID")
     private Media_Type media_type;
+
+    @OneToMany(mappedBy = "image_id")
+    private List<Article_Image> articleImageList;
 
     public Image() {
 
@@ -75,5 +79,13 @@ public class Image extends ResourceSupport implements Serializable {
 
     public void setMedia_type(Media_Type media_type) {
         this.media_type = media_type;
+    }
+
+    public List<Article_Image> getArticleImageList() {
+        return articleImageList;
+    }
+
+    public void setArticleImageList(List<Article_Image> articleImageList) {
+        this.articleImageList = articleImageList;
     }
 }

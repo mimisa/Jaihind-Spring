@@ -74,6 +74,7 @@ public class ImageController {
         String IP = req.getServerName();
         int Port = req.getServerPort();
 
+        outputJsonObj.put("image_id", image.getImage_id());
         outputJsonObj.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image.getImage_id());
 
         return outputJsonObj.toString();
