@@ -15,7 +15,7 @@ public interface VideoService {
 
     Page<Video> findAll(Pageable pageable);
 
-    Page<Video> findByCategory(Pageable pageable);
+    Page<Video> findByCategory(Pageable pageable, String category);
 
     void delete(Long video_id);
 

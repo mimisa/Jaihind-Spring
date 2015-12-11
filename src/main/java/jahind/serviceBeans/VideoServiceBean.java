@@ -34,8 +34,8 @@ public class VideoServiceBean implements VideoService {
     }
 
     @Override
-    public Page<Video> findByCategory(Pageable pageable) {
-        return videoRepository.findByCategory(pageable);
+    public Page<Video> findByCategory(Pageable pageable, String category) {
+        return videoRepository.findByCategory(pageable, category);
     }
 
     @Override

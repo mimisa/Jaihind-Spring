@@ -15,5 +15,5 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     Page<Video> findAll(Pageable pageable);
 
-    Page<Video> findByCategory(Pageable pageable);
+    Page<Video> findByCategory(Pageable pageable, String category);
 }

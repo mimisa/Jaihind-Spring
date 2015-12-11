@@ -89,7 +89,7 @@ public class VideoController {
     @RequestMapping(params = "category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedResources<Video> getVideosByCategory(@RequestParam("category") String category, Pageable pageable,
                                                      PagedResourcesAssembler assembler) {
-        Page<Video> articles = videoService.findByCategory(pageable);
+        Page<Video> articles = videoService.findByCategory(pageable, category);
         return assembler.toResource(articles, videoResourceAssembler);
     }
 
