@@ -3,11 +3,9 @@ package jahind;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -33,8 +31,26 @@ public class Application {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
 
-                registry.addMapping("/api/**").allowedMethods("GET","POST","PUT", "DELETE");
+                registry.addMapping("/api*//**//**//**/ ").allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
     }
+
+
+
+/*@SpringBootApplication
+@EnableSpringDataWebSupport
+@EnableTransactionManagement
+@Configuration
+public class Application extends SpringBootServletInitializer {
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }*/
+
 }

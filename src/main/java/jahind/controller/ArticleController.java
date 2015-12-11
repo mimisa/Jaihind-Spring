@@ -60,38 +60,7 @@ public class ArticleController {
     public String getData(@RequestParam("category") String category,
                           Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req) throws Exception {
         Page<Article> articles = articleService.findByCatgory(pageable, category);
-        JSONArray jsonArray = new JSONArray();
-        for (Article article : articles) {
-            List<Article_Image> aiList = article.getArticleImageList();
-            long image_id = 0L;
-            for (Article_Image ai : aiList) {
-                Image image = ai.getImage_id();
-                image_id = image.getImage_id();
-            }
-            String IP = req.getServerName();
-            int Port = req.getServerPort();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("article_id", article.getArticle_id());
-            jsonObject.put("article_name", article.getArticle_name());
-            jsonObject.put("article_content", article.getArticle_content());
-            jsonObject.put("article_created", article.getCreated());
-            jsonObject.put("category", article.getCategory());
-            jsonObject.put("article_published", article.getArticle_published());
-            jsonObject.put("published_date", article.getPublished_date());
-            jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
-            jsonObject.put("user_name", article.getUser().getName());
-            if (image_id != 0L) {
-                jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
-            } else {
-                jsonObject.put("image_link", "NA");
-            }
-
-            jsonArray.put(jsonObject);
-        }
-
-        return jsonArray.toString();
-
-
+        return this.getJson(articles, req);
     }
 
     // Fetch All Articles
@@ -99,37 +68,7 @@ public class ArticleController {
     public String getArticles(Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
             throws Exception {
         Page<Article> articles = articleService.findAll(pageable);
-        JSONArray jsonArray = new JSONArray();
-
-        for (Article article : articles) {
-            List<Article_Image> aiList = article.getArticleImageList();
-            long image_id = 0L;
-            for (Article_Image ai : aiList) {
-                Image image = ai.getImage_id();
-                image_id = image.getImage_id();
-            }
-            String IP = req.getServerName();
-            int Port = req.getServerPort();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("article_id", article.getArticle_id());
-            jsonObject.put("article_name", article.getArticle_name());
-            jsonObject.put("article_content", article.getArticle_content());
-            jsonObject.put("article_created", article.getCreated());
-            jsonObject.put("category", article.getCategory());
-            jsonObject.put("article_published", article.getArticle_published());
-            jsonObject.put("published_date", article.getPublished_date());
-            jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
-            jsonObject.put("user_name", article.getUser().getName());
-            if (image_id != 0L) {
-                jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
-            } else {
-                jsonObject.put("image_link", "NA");
-            }
-
-            jsonArray.put(jsonObject);
-        }
-
-        return jsonArray.toString();
+        return this.getJson(articles, req);
 
         //return assembler.toResource(articles, articleResourceAssembler);
     }
@@ -149,7 +88,7 @@ public class ArticleController {
         article.setArticle_content(article_content);
         article.setCreated(new Date());
         article.setArticle_published(0);
-        article.setPublished_date(null);
+        article.setPublishedDate(null);
         article.setCategory(category);
 
         article.setUser(user1);
@@ -158,12 +97,10 @@ public class ArticleController {
             articles = new ArrayList<>();
             articles.add(article);
             user1.setArticles(articles);
-
         } else {
             articles = user1.getArticles();
             articles.add(article);
             user1.setArticles(articles);
-
         }
 
         // Fetch Image
@@ -181,9 +118,7 @@ public class ArticleController {
             ai.setArticle_id(article);
             ai.setImage_id(image);
 
-
             articleImageList.add(ai);
-
         }
 
         // Save Article
@@ -202,7 +137,7 @@ public class ArticleController {
         jsonObject.put("article_created", article.getCreated());
         jsonObject.put("category", article.getCategory());
         jsonObject.put("article_published", article.getArticle_published());
-        jsonObject.put("published_date", article.getPublished_date());
+        jsonObject.put("published_date", article.getPublishedDate());
         jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
         jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
         jsonObject.put("user_name", article.getUser().getName());
@@ -239,7 +174,7 @@ public class ArticleController {
         jsonObject.put("article_created", article.getCreated());
         jsonObject.put("category", article.getCategory());
         jsonObject.put("article_published", article.getArticle_published());
-        jsonObject.put("published_date", article.getPublished_date());
+        jsonObject.put("published_date", article.getPublishedDate());
         jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
         jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
         jsonObject.put("user_name", article.getUser().getName());
@@ -260,7 +195,7 @@ public class ArticleController {
 
         Article article = articleService.findOne(article_id);
         List<Article_Image> aiList = article.getArticleImageList();
-        for(Article_Image ai: aiList){
+        for (Article_Image ai : aiList) {
             articleImageService.delete(ai);
         }
         articleService.delete(article_id);
@@ -279,12 +214,74 @@ public class ArticleController {
 
         Article article = articleService.findOne(article_id);
         article.setArticle_published(1);
-        article.setPublished_date(new Date());
+        article.setPublishedDate(new Date());
 
         Article updatedArticle = articleService.create(article);
 
         return new ResponseEntity<Article>(updatedArticle, HttpStatus.OK);
     }
 
+    // Fetch publised and unpublished articles with pagination and sorting
+    @RequestMapping(params = "published", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String fetchPublishedArticles(
+            @RequestParam("published") boolean published, Pageable pageable,
+            PagedResourcesAssembler assembler, HttpServletRequest req) throws Exception {
 
+        Integer flag = 0;
+        if (published == true) {
+            flag = 1;
+        }
+        Page<Article> articles = articleService.findPublsihedArticles(pageable, flag);
+        return this.getJson(articles, req);
+    }
+
+    // Fetch Articles by category and published with Pagination and sorting
+    @RequestMapping(params = {"category", "published"},
+            method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String fetchByCategoriesPublished(
+            @RequestParam("category") String category, @RequestParam("published") boolean published, Pageable pageable,
+            PagedResourcesAssembler assembler, HttpServletRequest req) throws Exception {
+        Integer flag = 0;
+        if (published == true) {
+            flag = 1;
+        }
+        Page<Article> articles = articleService.findByCategoryAndPublished(pageable, category, flag);
+
+        return this.getJson(articles, req);
+    }
+
+    // Utilty Method to get Json
+    public String getJson(Page<Article> articles, HttpServletRequest req) throws Exception {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Article article : articles) {
+            List<Article_Image> aiList = article.getArticleImageList();
+            long image_id = 0L;
+            for (Article_Image ai : aiList) {
+                Image image = ai.getImage_id();
+                image_id = image.getImage_id();
+            }
+            String IP = req.getServerName();
+            int Port = req.getServerPort();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("article_id", article.getArticle_id());
+            jsonObject.put("article_name", article.getArticle_name());
+            jsonObject.put("article_content", article.getArticle_content());
+            jsonObject.put("article_created", article.getCreated());
+            jsonObject.put("category", article.getCategory());
+            jsonObject.put("article_published", article.getArticle_published());
+            jsonObject.put("published_date", article.getPublishedDate());
+            jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
+            jsonObject.put("user_name", article.getUser().getName());
+            if (image_id != 0L) {
+                jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+            } else {
+                jsonObject.put("image_link", "NA");
+            }
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray.toString();
+    }
 }

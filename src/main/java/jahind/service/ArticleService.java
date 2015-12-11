@@ -15,6 +15,10 @@ public interface ArticleService {
 
     Page<Article> findByCatgory(Pageable pageable, String category);
 
+    Page<Article> findPublsihedArticles(Pageable pageable, Integer published);
+
+    Page<Article> findByCategoryAndPublished(Pageable pageable, String category, Integer published);
+
     Collection<Article> findAll();
 
     Article findOne(Long id);
