@@ -1,6 +1,10 @@
 package jahind.entity;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Gaurav on 10-12-2015.
@@ -8,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "VIDEO")
-public class Video {
+public class Video extends ResourceSupport implements Serializable {
 
     @Id
     @GeneratedValue
@@ -22,7 +26,15 @@ public class Video {
     private String video_url;
 
     @Column(name = "VIDEO_CATEGORY", nullable = false)
-    private String vCategory;
+    private String category;
+
+    @Column(name = "VIDEO_CREATED", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Video() {
     }
@@ -52,11 +64,26 @@ public class Video {
     }
 
     public String getvCategory() {
-        return vCategory;
+        return category;
     }
 
     public void setvCategory(String vCategory) {
-        this.vCategory = vCategory;
+        this.category = vCategory;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

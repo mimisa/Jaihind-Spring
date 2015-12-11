@@ -4,6 +4,8 @@ import jahind.entity.Video;
 import jahind.repository.VideoRepository;
 import jahind.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,5 +26,20 @@ public class VideoServiceBean implements VideoService {
     @Override
     public Video findOne(Long video_id) {
         return videoRepository.findOne(video_id);
+    }
+
+    @Override
+    public Page<Video> findAll(Pageable pageable) {
+        return videoRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Video> findByCategory(Pageable pageable) {
+        return videoRepository.findByCategory(pageable);
+    }
+
+    @Override
+    public void delete(Long video_id) {
+        videoRepository.delete(video_id);
     }
 }
