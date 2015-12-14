@@ -45,6 +45,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Video> videos;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Poll> polls;
+
     public User() {
     }
 
@@ -111,5 +115,13 @@ public class User {
 
     public void setVideos(List<Video> videos) {
         this.videos = videos;
+    }
+
+    public List<Poll> getPolls() {
+        return polls;
+    }
+
+    public void setPolls(List<Poll> polls) {
+        this.polls = polls;
     }
 }
