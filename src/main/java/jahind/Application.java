@@ -2,6 +2,8 @@ package jahind;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -14,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * Created by Gaurav on 16/11/15.
  */
 
-@SpringBootApplication
+/*@SpringBootApplication
 @EnableSpringDataWebSupport
 @EnableTransactionManagement
 @Configuration
@@ -30,15 +32,15 @@ public class Application {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-
                 registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE");
+                registry.addMapping("*//**").allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
-    }
+    }*/
 
 
 
-/*@SpringBootApplication
+@SpringBootApplication
 @EnableSpringDataWebSupport
 @EnableTransactionManagement
 @Configuration
@@ -51,6 +53,17 @@ public class Application extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
-    }*/
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+
+                registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE");
+            }
+        };
+    }
 
 }
