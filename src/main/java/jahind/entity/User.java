@@ -49,6 +49,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Poll> polls;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Advertise> advertiseList;
+
     public User() {
     }
 
@@ -123,5 +127,13 @@ public class User {
 
     public void setPolls(List<Poll> polls) {
         this.polls = polls;
+    }
+
+    public List<Advertise> getAdvertiseList() {
+        return advertiseList;
+    }
+
+    public void setAdvertiseList(List<Advertise> advertiseList) {
+        this.advertiseList = advertiseList;
     }
 }

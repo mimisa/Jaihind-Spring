@@ -4,6 +4,8 @@ import jahind.entity.Advertise;
 import jahind.repository.AdvertiseRepository;
 import jahind.service.AdvertiseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,5 +26,15 @@ public class AdvertiseServiceBean implements AdvertiseService {
     @Override
     public Advertise findOne(Long advertise_id) {
         return advertiseRepository.findOne(advertise_id);
+    }
+
+    @Override
+    public Page<Advertise> findAll(Pageable pageable) {
+        return advertiseRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Advertise> findByPlacement(Pageable pageable, String placement) {
+        return advertiseRepository.findByPlacement(pageable, placement);
     }
 }

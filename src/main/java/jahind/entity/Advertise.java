@@ -36,6 +36,16 @@ public class Advertise extends ResourceSupport implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date unpublishedDate;
 
+    @Column(name = "REDIRECT_LINK", nullable = false)
+    private String link;
+
+    @Column(name = "PLACEMENT", nullable = false)
+    private String placement;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Advertise() {
 
     }
@@ -78,5 +88,29 @@ public class Advertise extends ResourceSupport implements Serializable {
 
     public void setUnpublishedDate(Date unpublishedDate) {
         this.unpublishedDate = unpublishedDate;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(String placement) {
+        this.placement = placement;
     }
 }
