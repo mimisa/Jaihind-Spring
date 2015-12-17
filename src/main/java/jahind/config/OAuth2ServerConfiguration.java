@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -19,12 +20,17 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by Gaurav on 18/11/15.
  */
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class OAuth2ServerConfiguration {
     private static final String RESOURCE_ID = "restservice";
 
@@ -46,7 +52,10 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             http
                     .authorizeRequests()
-                    .antMatchers("/api/greeting").authenticated();
+                    .antMatchers("/api/greeting").authenticated()
+                    .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
+                    .antMatchers(HttpMethod.POST, "/oauth/token").permitAll()
+                    .antMatchers(HttpMethod.POST).authenticated();
             // @formatter:on
         }
 
@@ -68,6 +77,16 @@ public class OAuth2ServerConfiguration {
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
             // @formatter:off
+
+            endpoints.addInterceptor(new HandlerInterceptorAdapter() {
+                @Override
+                public boolean preHandle(HttpServletRequest hsr, HttpServletResponse rs, Object o) throws Exception {
+                    rs.setHeader("Access-Control-Allow-Origin", "*");
+                    rs.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+                    rs.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+                    return true;
+                }
+            });
             endpoints
                     .tokenStore(this.tokenStore)
                     .authenticationManager(this.authenticationManager)

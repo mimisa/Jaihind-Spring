@@ -6,6 +6,8 @@ import jahind.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.method.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -82,7 +84,8 @@ public class ArticleServiceBean implements ArticleService {
     }
 */
     @Override
-    public void delete(Article article) {
+    @PreAuthorize("#article.user.name == authentication.name or hasRole('ROLE_ADMIN')")
+    public void delete(@P("article")Article article) {
         articleRepository.delete(article);
     }
 

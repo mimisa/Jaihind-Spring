@@ -184,7 +184,7 @@ public class ArticleController {
     // Delete Article based on article_id
     @RequestMapping(value = "{article_id}", method = RequestMethod.DELETE)
     public ResponseEntity<Article> deleteArticle(@PathVariable("article_id") Long article_id,
-                                                 @AuthenticationPrincipal User user) {
+                                                 @AuthenticationPrincipal User user, Authentication authentication) {
 
         if (articleService.findOne(article_id) == null) {
             return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
@@ -195,7 +195,7 @@ public class ArticleController {
         for (Article_Image ai : aiList) {
             articleImageService.delete(ai);
         }
-        articleService.delete(article_id);
+        articleService.delete(article);
         return new ResponseEntity<Article>(HttpStatus.OK);
 
     }
