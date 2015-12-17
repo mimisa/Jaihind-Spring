@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -41,16 +42,11 @@ public class OAuth2ServerConfiguration {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
+
             // @formatter:off
             http
                     .authorizeRequests()
-                    //.antMatchers("/api/users").hasRole("ADMIN")
-                    //.antMatchers("/api/articles/{article_id}/{publish}").hasRole("ADMIN")
-                    //  .antMatchers("/api/articles").hasRole("GUEST")
-                    //  .antMatchers("/api/articles").hasRole("ADMIN");
                     .antMatchers("/api/greeting").authenticated();
-            //.antMatchers("/api/articles/{article_id}").hasRole("ADMIN")
-            // .antMatchers("/api/articles").authenticated();
             // @formatter:on
         }
 

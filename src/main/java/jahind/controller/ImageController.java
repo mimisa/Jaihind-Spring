@@ -85,6 +85,7 @@ public class ImageController {
 
     }
 
+    // Image Json Details
     @RequestMapping(value = "/{image_id}/details", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Image> getPhotoURL(@PathVariable("image_id") Long image_id) {
@@ -92,6 +93,7 @@ public class ImageController {
         return new ResponseEntity<Image>(image, HttpStatus.CREATED);
     }
 
+    // FetchImage Byte
     @RequestMapping(value = "/{image_id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPhoto(@PathVariable("image_id") Long image_id) throws Exception {
         Image image = imageService.findOne(image_id);
@@ -106,6 +108,7 @@ public class ImageController {
     }
 
     // Delete Image
+    
 
 /*
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
