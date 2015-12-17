@@ -170,4 +170,5 @@ public class PollController {
         resource.add(linkTo(methodOn(PollController.class).getPoll(polledPoll.getPoll_id())).withSelfRel());
         return resource;
     }
+
 }

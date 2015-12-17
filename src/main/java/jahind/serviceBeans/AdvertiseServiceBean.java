@@ -37,4 +37,9 @@ public class AdvertiseServiceBean implements AdvertiseService {
     public Page<Advertise> findByPlacement(Pageable pageable, String placement) {
         return advertiseRepository.findByPlacement(pageable, placement);
     }
+
+    @Override
+    public Advertise update(Advertise advertise) {
+        return advertiseRepository.save(advertise);
+    }
 }

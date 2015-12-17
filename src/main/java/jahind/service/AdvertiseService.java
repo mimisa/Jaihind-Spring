@@ -15,4 +15,6 @@ public interface AdvertiseService {
     Page<Advertise> findAll(Pageable pageable);
 
     Page<Advertise> findByPlacement(Pageable pageable, String placement);
+
+    Advertise update(Advertise advertise);
 }

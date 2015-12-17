@@ -25,6 +25,8 @@ public interface ArticleService {
 
     Article create(Article article);
 
+    Article update(Article article);
+
     // Article create(Article article, User user);
 
     void delete(Article article);

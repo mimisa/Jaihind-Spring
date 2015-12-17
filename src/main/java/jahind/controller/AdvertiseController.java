@@ -131,7 +131,7 @@ public class AdvertiseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getArticles(Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
+    public String getAdds(Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
             throws Exception {
         Page<Advertise> advertises = advertiseService.findAll(pageable);
         JSONArray jsonArray = new JSONArray();
@@ -155,8 +155,8 @@ public class AdvertiseController {
     }
 
     @RequestMapping(params = "placement", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getArticlesByPlacement(@RequestParam("placement") String placement,
-                                         Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
+    public String getAddssByPlacement(@RequestParam("placement") String placement,
+                                      Pageable pageable, PagedResourcesAssembler assembler, HttpServletRequest req)
             throws Exception {
         Page<Advertise> advertises = advertiseService.findByPlacement(pageable, placement);
         JSONArray jsonArray = new JSONArray();
@@ -177,6 +177,42 @@ public class AdvertiseController {
         }
 
         return jsonArray.toString();
+    }
+
+    // Update Advertisement
+    @RequestMapping(value = "/{add_id}",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public String updateAdds(
+            @PathVariable("add_id") Long add_id, String publishedDate, String unpublishedDate, String placement,
+            HttpServletRequest req) throws Exception {
+
+        DateFormat formatter = new SimpleDateFormat("YYYY-MM-DD");
+        Date date1 = formatter.parse(publishedDate);
+        Date date2 = formatter.parse(unpublishedDate);
+
+        Advertise advertise = advertiseService.findOne(add_id);
+        advertise.setPlacement(placement);
+        advertise.setPublishedDate(date1);
+        advertise.setUnpublishedDate(date2);
+
+        Advertise updatedAdds = advertiseService.update(advertise);
+
+        JSONObject jsonObject = new JSONObject();
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+
+        jsonObject.put("Advertise_Id", updatedAdds.getAdd_id());
+        jsonObject.put("Advertise_Name", updatedAdds.getAdd_name());
+        jsonObject.put("Published_Date", updatedAdds.getPublishedDate());
+        jsonObject.put("Unpublished_Date", updatedAdds.getUnpublishedDate());
+        jsonObject.put("Redirect_Link", updatedAdds.getLink());
+        jsonObject.put("Placement", updatedAdds.getPlacement());
+        jsonObject.put("Link", "http://" + IP + ":" + Port + "/Jaihind/api/adds/" + updatedAdds.getAdd_id());
+
+        return jsonObject.toString();
+
     }
 
 }

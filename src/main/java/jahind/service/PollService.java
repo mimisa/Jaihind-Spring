@@ -32,4 +32,5 @@ public interface PollService {
     void delete(Poll poll);
 
     void delete(Long Poll_id);
+
 }

@@ -105,6 +105,7 @@ public class ImageController {
 
     }
 
+    // Delete Image
 
 /*
     @RequestMapping(value = "/upload", method = RequestMethod.POST)

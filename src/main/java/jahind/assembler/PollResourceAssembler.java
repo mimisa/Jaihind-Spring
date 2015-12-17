@@ -1,6 +1,5 @@
 package jahind.assembler;
 
-import jahind.controller.ArticleController;
 import jahind.controller.PollController;
 import jahind.entity.Poll;
 import org.springframework.hateoas.Resource;

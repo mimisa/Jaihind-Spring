@@ -189,6 +189,7 @@ public class ArticleController {
     @RequestMapping(value = "{article_id}", method = RequestMethod.DELETE)
     public ResponseEntity<Article> deleteArticle(@PathVariable("article_id") Long article_id,
                                                  @AuthenticationPrincipal User user) {
+
         if (articleService.findOne(article_id) == null) {
             return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
         }
@@ -248,6 +249,43 @@ public class ArticleController {
         Page<Article> articles = articleService.findByCategoryAndPublished(pageable, category, flag);
 
         return this.getJson(articles, req);
+    }
+
+    // Edit Articles
+    @RequestMapping(value = "/{article_id}",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public String editArticle(@PathVariable("article_id") Long article_id,
+                              String article_name, String article_content, HttpServletRequest req) throws Exception {
+        Article article = articleService.findOne(article_id);
+        article.setArticle_name(article_name);
+        article.setArticle_content(article_content);
+
+        Article savedArticle = articleService.update(article);
+
+        List<Article_Image> aiList = article.getArticleImageList();
+        long image_id = 0L;
+        for (Article_Image ai : aiList) {
+            Image image = ai.getImage_id();
+            image_id = image.getImage_id();
+        }
+
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("article_name", savedArticle.getArticle_name());
+        jsonObject.put("article_content", savedArticle.getArticle_content());
+        jsonObject.put("article_created", savedArticle.getCreated());
+        jsonObject.put("category", savedArticle.getCategory());
+        jsonObject.put("article_published", savedArticle.getArticle_published());
+        jsonObject.put("published_date", savedArticle.getPublishedDate());
+        jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + savedArticle.getArticle_id());
+        jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        jsonObject.put("user_name", savedArticle.getUser().getName());
+
+        return jsonObject.toString();
+
     }
 
     // Utilty Method to get Json

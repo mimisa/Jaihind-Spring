@@ -54,6 +54,11 @@ public class ArticleServiceBean implements ArticleService {
         return articleRepository.save(article);
     }
 
+    @Override
+    public Article update(Article article) {
+        return articleRepository.save(article);
+    }
+
     /*
     public Article create(Article article, User user) {
         // Adding date & user to article

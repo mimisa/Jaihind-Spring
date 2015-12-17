@@ -1,7 +1,6 @@
 package jahind.repository;
 
 import jahind.entity.Poll;
-import jahind.entity.Poll;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
