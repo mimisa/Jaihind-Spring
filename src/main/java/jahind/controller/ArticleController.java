@@ -1,7 +1,10 @@
 package jahind.controller;
 
 import jahind.assembler.ArticleResourceAssembler;
-import jahind.entity.*;
+import jahind.entity.Article;
+import jahind.entity.Article_Image;
+import jahind.entity.Image;
+import jahind.entity.User;
 import jahind.repository.ArticleImageRepository;
 import jahind.service.ArticleImageService;
 import jahind.service.ArticleService;
@@ -18,12 +21,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 //import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
@@ -80,7 +84,7 @@ public class ArticleController {
         Integer id = user.getId();
         User user1 = userService.findOne(id);
 
-       authentication.getAuthorities();
+        authentication.getAuthorities();
         // Creating Article
         Article article = new Article();
         article.setArticle_name(article_name);
@@ -184,7 +188,7 @@ public class ArticleController {
     // Delete Article based on article_id
     @RequestMapping(value = "{article_id}", method = RequestMethod.DELETE)
     public ResponseEntity<Article> deleteArticle(@PathVariable("article_id") Long article_id,
-                                                 @AuthenticationPrincipal User user, Authentication authentication) {
+                                                 @AuthenticationPrincipal User user) {
 
         if (articleService.findOne(article_id) == null) {
             return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);

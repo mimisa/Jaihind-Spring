@@ -85,7 +85,7 @@ public class ArticleServiceBean implements ArticleService {
 */
     @Override
     @PreAuthorize("#article.user.name == authentication.name or hasRole('ROLE_ADMIN')")
-    public void delete(@P("article")Article article) {
+    public void delete(@P("article") Article article) {
         articleRepository.delete(article);
     }
 
