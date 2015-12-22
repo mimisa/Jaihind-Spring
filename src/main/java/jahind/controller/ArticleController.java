@@ -156,7 +156,11 @@ public class ArticleController {
         jsonObject.put("published_date", savedArticle.getPublishedDate());
         jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + savedArticle.getArticle_id());
         jsonObject.put("user_name", savedArticle.getUser().getName());
-
+        if (image_id != 0L) {
+            jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        } else {
+            jsonObject.put("image_link", "NA");
+        }
         return jsonObject.toString();
     }
 
@@ -190,7 +194,11 @@ public class ArticleController {
         jsonObject.put("published_date", article.getPublishedDate());
         jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + article.getArticle_id());
         jsonObject.put("user_name", article.getUser().getName());
-
+        if (image_id != 0L) {
+            jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        } else {
+            jsonObject.put("image_link", "NA");
+        }
         // Link to Article
         // resource.add(linkTo(methodOn(ArticleController.class).getArticle(article.getArticle_id())).withSelfRel());
 
@@ -199,11 +207,11 @@ public class ArticleController {
 
     // Delete Article based on article_id
     @RequestMapping(value = "{article_id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Article> deleteArticle(@PathVariable("article_id") Long article_id,
-                                                 @AuthenticationPrincipal User user) {
+    public void deleteArticle(@PathVariable("article_id") Long article_id,
+                                                 @AuthenticationPrincipal User user) throws Exception{
 
         if (articleService.findOne(article_id) == null) {
-            return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
+            throw new Exception();
         }
 
         Article article = articleService.findOne(article_id);
@@ -212,7 +220,6 @@ public class ArticleController {
             articleImageService.delete(ai);
         }
         articleService.delete(article);
-        return new ResponseEntity<Article>(HttpStatus.OK);
 
     }
 
@@ -220,19 +227,43 @@ public class ArticleController {
     @RequestMapping(value = "{article_id}/publish",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Article> publishArticle(@PathVariable("article_id") Long article_id,
-                                                  @AuthenticationPrincipal User user) {
+    public String publishArticle(@PathVariable("article_id") Long article_id,
+                                                  @AuthenticationPrincipal User user, HttpServletRequest req) throws Exception{
         if (articleService.findOne(article_id) == null) {
-            return new ResponseEntity<Article>(HttpStatus.NOT_FOUND);
+            throw new Exception();
         }
 
         Article article = articleService.findOne(article_id);
         article.setArticle_published(1);
         article.setPublishedDate(new Date());
 
+        List<Article_Image> aiList = article.getArticleImageList();
+        long image_id = 0L;
+        for (Article_Image ai : aiList) {
+            Image image = ai.getImage_id();
+            image_id = image.getImage_id();
+        }
         Article updatedArticle = articleService.create(article);
 
-        return new ResponseEntity<Article>(updatedArticle, HttpStatus.OK);
+        String IP = req.getServerName();
+        int Port = req.getServerPort();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("article_id", updatedArticle.getArticle_id());
+        jsonObject.put("article_name", updatedArticle.getArticle_name());
+        jsonObject.put("article_content", updatedArticle.getArticle_content());
+        jsonObject.put("article_created", updatedArticle.getCreated());
+        jsonObject.put("category", updatedArticle.getCategory());
+        jsonObject.put("article_published", updatedArticle.getArticle_published());
+        jsonObject.put("published_date", updatedArticle.getPublishedDate());
+        jsonObject.put("link", "http://" + IP + ":" + Port + "/Jaihind/api/articles/" + updatedArticle.getArticle_id());
+        jsonObject.put("user_name", updatedArticle.getUser().getName());
+        if (image_id != 0L) {
+            jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        } else {
+            jsonObject.put("image_link", "NA");
+        }
+
+        return jsonObject.toString();
     }
 
     // Fetch publised and unpublished articles with pagination and sorting
@@ -297,6 +328,11 @@ public class ArticleController {
         jsonObject.put("page", savedArticle.getPage().getPage_id());
         jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
         jsonObject.put("user_name", savedArticle.getUser().getName());
+        if (image_id != 0L) {
+            jsonObject.put("image_link", "http://" + IP + ":" + Port + "/Jaihind/api/images/" + image_id);
+        } else {
+            jsonObject.put("image_link", "NA");
+        }
 
         return jsonObject.toString();
 
