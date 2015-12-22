@@ -31,6 +31,7 @@ public class ArticleServiceBean implements ArticleService {
         return articleRepository.findByCategory(pageable, category);
     }
 
+
     @Override
     public Page<Article> findPublsihedArticles(Pageable pageable, Integer published) {
         return articleRepository.findByPublished(pageable, published);

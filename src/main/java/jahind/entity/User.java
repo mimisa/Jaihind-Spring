@@ -53,6 +53,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Advertise> advertiseList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Page_Entity> pageEntities;
+
     public User() {
     }
 
@@ -135,5 +139,13 @@ public class User {
 
     public void setAdvertiseList(List<Advertise> advertiseList) {
         this.advertiseList = advertiseList;
+    }
+
+    public List<Page_Entity> getPageEntities() {
+        return pageEntities;
+    }
+
+    public void setPageEntities(List<Page_Entity> pageEntities) {
+        this.pageEntities = pageEntities;
     }
 }

@@ -25,8 +25,7 @@ public class ArticleResourceAssembler extends ResourceAssemblerSupport<Article, 
     public List<Resource> toResources(Iterable<? extends Article> articles) {
         List<Resource> resources = new ArrayList<Resource>();
         for (Article article : articles) {
-            resources.add(new Resource<Article>(article, linkTo(ArticleController.class).slash(
-                    article.getArticle_id()).withSelfRel()));
+            resources.add(new Resource<Article>(article, linkTo(ArticleController.class).slash(article.getArticle_id()).withSelfRel()));
         }
         return resources;
     }

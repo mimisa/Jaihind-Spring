@@ -65,6 +65,9 @@ public class Application extends SpringBootServletInitializer {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE");
+                registry.addMapping("/**").allowedOrigins("*");
+                registry.addMapping("/**").allowedHeaders("x-auth-token,Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
+                // registry.addMapping("/**").exposedHeaders("Access-Control-Allow-Origin,Access-Control-Allow-Credentials");
             }
         };
     }

@@ -46,6 +46,10 @@ public class Article extends ResourceSupport implements Serializable {
     private List<Article_Image> articleImageList;
 
     @ManyToOne
+    @JoinColumn(name = "page_id")
+    private Page_Entity page;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -116,6 +120,30 @@ public class Article extends ResourceSupport implements Serializable {
         this.publishedDate = publishedDate;
     }
 
+    public List<Article_Image> getArticleImageList() {
+        return articleImageList;
+    }
+
+    public void setArticleImageList(List<Article_Image> articleImageList) {
+        this.articleImageList = articleImageList;
+    }
+
+    public Integer getPublished() {
+        return published;
+    }
+
+    public void setPublished(Integer published) {
+        this.published = published;
+    }
+
+    public Page_Entity getPage() {
+        return page;
+    }
+
+    public void setPage(Page_Entity page) {
+        this.page = page;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -124,11 +152,4 @@ public class Article extends ResourceSupport implements Serializable {
         this.category = category;
     }
 
-    public List<Article_Image> getArticleImageList() {
-        return articleImageList;
-    }
-
-    public void setArticleImageList(List<Article_Image> articleImageList) {
-        this.articleImageList = articleImageList;
-    }
 }

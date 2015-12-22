@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,6 +32,7 @@ public class OAuth2ServerConfiguration {
 
     @Configuration
     @EnableResourceServer
+
     protected static class ResourceServerConfiguration extends
             ResourceServerConfigurerAdapter {
 
@@ -45,14 +45,16 @@ public class OAuth2ServerConfiguration {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-
+            http.authorizeRequests().antMatchers("/api/greeting").authenticated();
+            http.authorizeRequests().antMatchers("/oauth/token").permitAll();
+            //http.authorizeRequests().antMatchers(HttpMethod.OPTIONS,"/oauth/token").fullyAuthenticated();
             // @formatter:off
-            http
-                    .authorizeRequests()
-                    .antMatchers("/api/greeting").authenticated()
-                    .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
-                    .antMatchers(HttpMethod.POST, "/oauth/token").permitAll()
-                    .antMatchers(HttpMethod.POST).authenticated();
+//            http.authorizeRequests()
+//                    .antMatchers("/api/greeting").authenticated();
+            // http.authorizeRequests().antMatchers("/oauth/token").permitAll().anyRequest().authenticated();
+            //http.httpBasic().and().formLogin().and().authorizeRequests().antMatchers("/oauth/token").permitAll().anyRequest().authenticated();
+            //http.antMatcher("/oauth/token").p
+
             // @formatter:on
         }
 
@@ -75,12 +77,13 @@ public class OAuth2ServerConfiguration {
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
             // @formatter:off
 
-           /* endpoints.addInterceptor(new HandlerInterceptorAdapter() {
+            /*endpoints.addInterceptor(new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(HttpServletRequest hsr, HttpServletResponse rs, Object o) throws Exception {
                     rs.setHeader("Access-Control-Allow-Origin", "*");
                     rs.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-                    rs.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+                    rs.setHeader("Access-Control-Allow-Headers", "Content-Type,X-Requested-With,accept," +
+                            "Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
                     return true;
                 }
             });*/
